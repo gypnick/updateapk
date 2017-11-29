@@ -1,5 +1,6 @@
 # updateapk
-### android更新APP版本轮子
+### 几行代码实现android更新下载APP，适配到androd7.0
+![image](https://github.com/gypnick/updateapk/blob/master/update.gif)
 ## 1.导入到工程
 ####    Step 1.Add it in your root build.gradle at the end of repositories:
   ```Java
