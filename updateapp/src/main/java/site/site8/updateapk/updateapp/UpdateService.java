@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -249,13 +250,14 @@ public class UpdateService extends Service {
 
             //android8.0需要NotificationChannel
         if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);
-            channel.setVibrationPattern(null);
+            NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            channel.enableLights(false);
+            channel.setLightColor(Color.RED);
+            channel.enableVibration(false);
             manager.createNotificationChannel(channel);
-            builder = new NotificationCompat.Builder(getApplicationContext(), id);
-        } else {
-            builder = new NotificationCompat.Builder(this);
         }
+
+        builder = new NotificationCompat.Builder(getApplicationContext(), id);
 
         builder.setContentTitle("准备下载")
                 .setWhen(System.currentTimeMillis())
