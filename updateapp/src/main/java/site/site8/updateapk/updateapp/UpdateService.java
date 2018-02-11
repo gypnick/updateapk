@@ -2,6 +2,7 @@ package site.site8.updateapk.updateapp;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -69,6 +70,8 @@ public class UpdateService extends Service {
 
     private UpdateProgressListener updateProgressListener;
     private LocalBinder localBinder = new LocalBinder();
+    public static final String id = "channel_1";
+    public static final String name = "channel_name_1";
 
     /**
      * Class used for the client Binder.
@@ -235,8 +238,6 @@ public class UpdateService extends Service {
 
 
     private void buildNotification() {
-
-
         boolean isLollipop = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
         int smallIcon = getResources().getIdentifier("notification_small_icon", "drawable", getPackageName());
 
@@ -245,15 +246,24 @@ public class UpdateService extends Service {
         }
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        builder = new NotificationCompat.Builder(this);
+
+            //android8.0需要NotificationChannel
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);
+            channel.setVibrationPattern(null);
+            manager.createNotificationChannel(channel);
+            builder = new NotificationCompat.Builder(getApplicationContext(), id);
+        } else {
+            builder = new NotificationCompat.Builder(this);
+        }
+
         builder.setContentTitle("准备下载")
                 .setWhen(System.currentTimeMillis())
                 .setProgress(100, 1, false)
                 .setSmallIcon(smallIcon)
                 .setLargeIcon(BitmapFactory.decodeResource(
                         getResources(), icoResId))
-                .setDefaults(0);
-
+                .setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE);
 
         manager.notify(notifyId, builder.build());
     }
@@ -273,6 +283,7 @@ public class UpdateService extends Service {
     private void update(int progress) {
         if (progress - lastProgressNumber > updateProgress) {
             lastProgressNumber = progress;
+
             builder.setProgress(100, progress, false);
             builder.setContentText(String.format("正在下载%S", progress) + "%");
             manager.notify(notifyId, builder.build());

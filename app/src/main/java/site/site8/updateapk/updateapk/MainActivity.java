@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     public void update(View view) {
         UpdateService.Builder.create(url)
                 .setVersionCode(2)
-                .setIsForce(true)
+                .setIsForce(false)
                 .build(MainActivity.this);
     }
 }
